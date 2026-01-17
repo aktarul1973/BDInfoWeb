@@ -3,59 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>বাংলা নিউজ নেটওয়ার্ক</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>AK নিউজ নেটওয়ার্ক</title>
+  <style>
+    body {
+      font-family: "Noto Sans Bengali", sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #c62828;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    #news-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* ৩ কলাম */
+      gap: 15px;
+      padding: 15px;
+    }
+    .headline {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .headline:hover {
+      transform: scale(1.02);
+    }
+    .headline h3 {
+      margin: 0 0 10px;
+      color: #333;
+      font-size: 1.1em;
+    }
+    .headline a {
+      text-decoration: none;
+      color: #c62828;
+      font-weight: bold;
+    }
+    .headline a:hover {
+      text-decoration: underline;
+    }
+  </style> 
 </head>
 <body>
   <header>
-    <h1>বাংলা নিউজ নেটওয়ার্ক</h1>
-    <p>সর্বশেষ শিরোনাম</p>
+    <h1>BDInfoweb – বাংলা নিউজ নেটওয়ার্ক</h1>
+    <p> সর্বশেষ শিরোনাম</p>
   </header>
 
-  <main class="container">
-    <div id="loading">শিরোনাম লোড করা হচ্ছে...</div>
-    <div id="news-container"></div>
-  </main>
+  <div id="news-container"></div>
 
   <script>
     const feeds = [
-      "https://feeds.bbci.co.uk/news/rss.xml",
-      "https://www.prothomalo.com/feed",
-      "https://www.kalerkantho.com/rss.xml"
+      "https://www.bbc.com/bengali/index.xml",      // BBC Bangla
+      "https://www.arthosuchak.com/feed/",         // অর্থসূচক
+      "https://www.amardesh.com/feed/",            // আমার দেশ
+      "https://www.karatoa.com.bd/feed/",          // দৈনিক করতোয়া
+      "https://www.bdnews24.com/rss/bangla",       // BDNews24 Bangla
+      "https://feeds.bbci.co.uk/news/rss.xml",     // BBC English
+      "https://www.prothomalo.com/feed",           // Prothom Alo
+      "https://www.kalerkantho.com/rss.xml"        // Kaler Kantho
     ];
 
-    // Detect if a string already contains Bangla characters
     function isBangla(text) {
-      if (!text) return false;
       return /[\u0980-\u09FF]/.test(text);
     }
 
-    // Translate text to Bangla using LibreTranslate (server may block CORS)
     async function translateToBangla(text) {
       if (!text) return "";
-      // If text already contains Bangla, skip translation
       if (isBangla(text)) return text;
-
       try {
         const res = await fetch("https://libretranslate.de/translate", {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ q: text, source: 'auto', target: 'bn', format: 'text' })
         });
-
-        if (!res.ok) throw new Error('Translate service returned ' + res.status);
         const data = await res.json();
         return data.translatedText || text;
-      } catch (err) {
-        console.warn('Translation failed, returning original text:', err);
-        return text; // fallback to original if translation fails
+      } catch {
+        return text;
       }
     }
 
     async function fetchHeadlines() {
       const container = document.getElementById('news-container');
-      const loading = document.getElementById('loading');
-      loading.style.display = 'block';
       container.innerHTML = '';
 
       let headlines = [];
@@ -63,41 +96,28 @@
         try {
           const r = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url));
           const data = await r.json();
-          if (data && Array.isArray(data.items)) headlines = headlines.concat(data.items.slice(0, 4));
+          if (data && Array.isArray(data.items)) headlines = headlines.concat(data.items.slice(0, 10));
         } catch (e) {
           console.error('Feed fetch error for', url, e);
         }
       }
 
-      headlines = headlines.slice(0, 10);
+      // মোট ৫১টা শিরোনাম দেখাবে
+      headlines = headlines.slice(0, 51);
 
-      // Prepare translation promises only for items that need translation
-      const translatePromises = headlines.map(item => {
-        const text = (item.title || item.description || '').trim();
-        return isBangla(text) ? Promise.resolve(text) : translateToBangla(text);
-      });
-
-      const translated = await Promise.all(translatePromises);
-
-      translated.forEach((titleBn, idx) => {
-        const item = headlines[idx];
-        const div = document.createElement('div');
-        div.className = 'headline';
-        const safeTitle = titleBn || (item.title || '');
+      for (const item of headlines) {
+        const text = (item.title || '').trim();
         const link = item.link || '#';
-        const source = item.source || '';
-        const pubDate = item.pubDate ? new Date(item.pubDate).toLocaleString() : '';
-        div.innerHTML = `<h3>${safeTitle}</h3><div class="meta">${pubDate} ${source ? '• ' + source : ''}</div><p><a href="${link}" target="_blank" rel="noopener noreferrer">মূল খবর পড়ুন</a></p>`;
-        container.appendChild(div);
-      });
+        const translated = await translateToBangla(text);
 
-      loading.style.display = 'none';
-      if (headlines.length === 0) {
-        container.innerHTML = '<p style="padding:15px;">শিরোনাম পাওয়া যায়নি — কনসোলে ত্রুটি দেখুন।</p>';
+        const div = document.createElement("div");
+        div.className = "headline";
+        div.innerHTML = `<h3>${translated}</h3>
+                         <p><a href="${link}" target="_blank">মূল খবর পড়ুন</a></p>`;
+        container.appendChild(div);
       }
     }
 
-    // Initial load and periodic refresh every 2 minutes
     fetchHeadlines();
     setInterval(fetchHeadlines, 120000);
   </script>
