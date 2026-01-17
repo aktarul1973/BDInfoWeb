@@ -4,16 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>বাংলা নিউজ নেটওয়ার্ক</title>
-  <style>
-    body { font-family: "Noto Sans Bengali", sans-serif; background: #f4f4f4; margin: 0; }
-    header { background: #c62828; color: white; padding: 20px; text-align: center; }
-    .headline { background: white; margin: 15px; padding: 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .headline h3 { margin: 0; color: #333; }
-    .headline a { text-decoration: none; color: #c62828; font-weight: bold; }
-    .headline a:hover { text-decoration: underline; }
-    .meta { font-size: 0.9em; color: #666; margin-top: 8px; }
-    #loading { text-align: center; padding: 20px; color: #555; }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header>
@@ -21,8 +12,10 @@
     <p>BBC, Prothom Alo ও Kaler Kantho থেকে সর্বশেষ শিরোনাম</p>
   </header>
 
-  <div id="loading">শিরোনাম লোড করা হচ্ছে...</div>
-  <div id="news-container"></div>
+  <main class="container">
+    <div id="loading">শিরোনাম লোড করা হচ্ছে...</div>
+    <div id="news-container"></div>
+  </main>
 
   <script>
     const feeds = [
