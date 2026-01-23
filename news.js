@@ -65,7 +65,7 @@ async function fetchHeadlines() {
   headlines.sort((a, b) => getDate(b) - getDate(a));
 
   // সর্বশেষ ৫টি headline নেওয়া
-  const latestFive = headlines.slice(0, 5);
+  const latestFive = headlines.slice(0, 52);
 
   for (const item of latestFive) {
     const text = (item.title || '').trim();
