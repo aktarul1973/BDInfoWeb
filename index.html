@@ -4,12 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>বাংলা নিউজ নেটওয়ার্ক</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
     <h1>বাংলা নিউজ নেটওয়ার্ক</h1>
     <p>সর্বশেষ শিরোনাম</p>
+<h6>মোঃ আখতারুল ইসলাম</6>
+
   </header>
 
   <main class="container">
@@ -17,110 +19,7 @@
     <div id="news-container"></div>
   </main>
 
-  <script>
-    const feeds = [
-      "https://feeds.bbci.co.uk/news/rss.xml",          // BBC English
-      "https://www.prothomalo.com/feed",               // প্রথম আলো
-      "https://www.kalerkantho.com/rss.xml",           // কালের কণ্ঠ
-      "https://www.thedailystar.net/rss.xml",          // The Daily Star
-      "https://www.jamuna.tv/feed",                    // Jamuna Television
-      "https://www.amardesh.com/rss.xml",              // Amar Desh
-      "https://www.bbc.com/bengali/index.xml",         // BBC Bangla
-      "https://bdnews24.com/?widget=rssfeed",          // BD News24
-      "https://www.arthosuchak.com/feed"               // অর্থসূচক
-    ];
-
-    function isBangla(text) {
-      if (!text) return false;
-      return /[\u0980-\u09FF]/.test(text);
-    }
-
-    async function translateToBangla(text) {
-      if (!text) return "";
-      if (isBangla(text)) return text;
-      try {
-        const res = await fetch("https://libretranslate.de/translate", {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ q: text, source: 'auto', target: 'bn', format: 'text' })
-        });
-        if (!res.ok) throw new Error('Translate service returned ' + res.status);
-        const data = await res.json();
-        return data.translatedText || text;
-      } catch (err) {
-        console.warn('Translation failed, returning original text:', err);
-        return text;
-      }
-    }
-
-    async function fetchHeadlines() {
-      const container = document.getElementById('news-container');
-      const loading = document.getElementById('loading');
-      loading.style.display = 'block';
-      container.innerHTML = '';
-
-      let headlines = [];
-      for (const url of feeds) {
-        try {
-          const r = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url));
-          const data = await r.json();
-          if (data && Array.isArray(data.items)) {
-            const sourceName = data.feed && data.feed.title ? data.feed.title : '';
-            // প্রতিটি আইটেমে source যোগ করো
-            const items = data.items.slice(0, 10).map(it => ({
-              ...it,
-              source: sourceName
-            }));
-            headlines = headlines.concat(items);
-          }
-        } catch (e) {
-          console.error('Feed fetch error for', url, e);
-        }
-      }
-
-      headlines = headlines.slice(0, 52);
-      headlines.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-      headlines.sort((a, b) => {
-        const aText = (a.title || "").trim();
-        const bText = (b.title || "").trim();
-        const aIsBn = isBangla(aText);
-        const bIsBn = isBangla(bText);
-        if (aIsBn && !bIsBn) return -1;
-        if (!aIsBn && bIsBn) return 1;
-        return 0;
-      });
-
-      const translatePromises = headlines.map(item => {
-        const text = (item.title || item.description || '').trim();
-        return isBangla(text) ? Promise.resolve(text) : translateToBangla(text);
-      });
-
-      const translated = await Promise.all(translatePromises);
-
-      translated.forEach((titleBn, idx) => {
-        const item = headlines[idx];
-        const div = document.createElement('div');
-        div.className = 'headline';
-        const safeTitle = titleBn || (item.title || '');
-        const link = item.link || '#';
-        const source = item.source || '';
-        const pubDate = item.pubDate ? new Date(item.pubDate).toLocaleString() : '';
-        div.innerHTML = `
-          <h3>${safeTitle}</h3>
-          <div class="meta">${pubDate} • ${source}</div>
-          <p><a href="${link}" target="_blank" rel="noopener noreferrer">মূল খবর পড়ুন</a></p>
-        `;
-        container.appendChild(div);
-      });
-
-      loading.style.display = 'none';
-      if (headlines.length === 0) {
-        container.innerHTML = '<p style="padding:15px;">শিরোনাম পাওয়া যায়নি — কনসোলে ত্রুটি দেখুন।</p>';
-      }
-    }
-
-    fetchHeadlines();
-    setInterval(fetchHeadlines, 120000);
-  </script>
+  <!-- news.js ফাইল লিঙ্ক -->
+  <script src="news2.js"></script>
 </body>
 </html>
