@@ -1,0 +1,85 @@
+/* css/styles.css */
+:root{
+  --bg:#f9f9f9;              /* হালকা ব্যাকগ্রাউন্ড */
+  --card:#fff;
+  --accent:#c62828;
+  --text:#331;
+  --muted:#666;
+  --radius:6px;
+  --shadow:0 2px 6px rgba(0,0,0,0.08);
+  --font: "Noto Sans Bengali", sans-serif;
+
+  /* তিনটি আলাদা টেক্সট কালার */
+  --col1:#2c3e50;   /* গাঢ় নীল */
+  --col2:#00695c;   /* সবুজাভ */
+  --col3:#8e24aa;   /* বেগুনি */
+}
+*{box-sizing:border-box}
+html,body{
+  height:100%;
+  margin: 5px;
+  font-family:var(--font);
+  background:skyblue);
+  color:var(--text);
+  text-decoration: double;
+  feColorMatrix
+}
+header{
+  background:var(--accent);
+  background-color: aquamarine;
+  color:blueviolet;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 1px 0 rgba(0,1,0,0.05);
+  text-shadow: #00695c;
+  }
+  h6 { color:blue;}
+.container{
+  max-width:980px;
+  margin:18px auto;
+  padding:1 12px;
+}
+#news-container{
+  display:grid;
+  grid-template-columns:repeat(3,1fr); /* সবসময় ৩ কলাম */
+  gap:12px;
+  background-color: aqua;
+  color-scheme: var(--shadow);
+}
+.headline{
+  background:var(--card);
+  padding:11px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  display:-ms-grid;
+  flex-direction:column;
+  text-align: center;
+  font-variant: inherit;
+  text-decoration-thickness: var(--col1);
+  text-overflow: clip;
+  min-height:100px;
+}
+.headline h3{
+  margin: 5px 5px 3px;
+  font-size:1.05rem;
+  line-height:1.3;
+  font-size: large;
+}
+.meta{
+  font-size:0.85rem;
+  color:var(--muted);
+  margin: bottom 3px;
+}
+.headline a{
+  margin-top:auto;
+  text-decoration:none;
+  color:var(--accent);
+  font-weight:600;
+}
+.headline a:hover{text-decoration:underline}
+#loading{text-align:center;padding:18px;color:var(--muted); text-size-adjust: initial;}
+
+/* তিন কলামের জন্য আলাদা টেক্সট কালার */
+#news-container .headline:nth-child(3n+1) h3 { color: var(--col1); }
+#news-container .headline:nth-child(3n+2) h3 { color: var(--col2); }
+#news-container .headline:nth-child(3n+3) h3 { color: var(--col1); }
