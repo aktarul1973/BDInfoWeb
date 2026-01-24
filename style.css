@@ -25,7 +25,7 @@ html,body{
   feColorMatrix
 }
 header{
-  background-image: url('images/sprt.jpg'); background-size: cover; background-position: cente;
+  background-image: url('https://github.com/aktarul1973/BDInfoWeb/blob/main/Sprts.jpeg?raw=true'); background-size: cover; background-position: cente;
   background-color: aquamarine;
   color:blueviolet;
   padding:20px;
