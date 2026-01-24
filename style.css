@@ -25,7 +25,7 @@ html,body{
   feColorMatrix
 }
 header{
-  background:var(--accent);
+  background-image: url('images/sprt.jpg'); background-size: cover; background-position: cente;
   background-color: aquamarine;
   color:blueviolet;
   padding:20px;
