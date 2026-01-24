@@ -28,7 +28,7 @@ html, body {
 }
 
 header {
-  background-image: url('https://raw.githubusercontent.com/aktarul1973/BDInfoWeb/main/Sprts.jpeg');
+  background-image: url('Sprts.jpeg');
   background-size: cover;
   background-position: center;
   color: blueviolet;
