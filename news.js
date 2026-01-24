@@ -11,28 +11,6 @@ const feeds = [
   "https://www.kalerkantho.com/rss.xml"
 ];
 
-async function fetchHeadlines() {
-  const container = document.getElementById('news-container');
-  container.innerHTML = '';
-
-  let headlines = [];
-  for (const url of feeds) {
-    try {
-      const r = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url));
-      const data = await r.json();
-      if (data && Array.isArray(data.items)) {
-        data.items.forEach(item => {
-          item.sourceTitle = data.feed ? data.feed.title : "অজানা উৎস";
-        });
-        headlines = headlines.concat(data.items);
-      }
-    } catch (e) {
-      console.error('Feed fetch error for', url, e);
-    }
-  }
-
-  // তারিখ অনুযায়ী sort করা (সর্বশেষ আগে)
-  headlines.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 // তারিখ বের করার জন্য helper function
 function getDate(item) {
   if (item.pubDate) return new Date(item.pubDate);
@@ -64,10 +42,10 @@ async function fetchHeadlines() {
   // তারিখ অনুযায়ী sort করা (সর্বশেষ আগে)
   headlines.sort((a, b) => getDate(b) - getDate(a));
 
-  // সর্বশেষ ৫টি headline নেওয়া
-  const latestFive = headlines.slice(0, 52);
+  // সর্বশেষ ৬৩টি headline নেওয়া (আপনি slice(0,63) দিয়েছেন)
+  const latestNews = headlines.slice(0, 63);
 
-  for (const item of latestFive) {
+  for (const item of latestNews) {
     const text = (item.title || '').trim();
     const link = item.link || '#';
     const source = item.sourceTitle || "অজানা উৎস";
@@ -86,14 +64,8 @@ async function fetchHeadlines() {
   }
 }
 
-fetchHeadlines();
-setInterval(fetchHeadlines, 120000);
-
-
- 
-}
-
 // প্রথমবার লোড
 fetchHeadlines();
+
 // প্রতি 2 মিনিট পর আবার লোড
 setInterval(fetchHeadlines, 120000);
