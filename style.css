@@ -12,7 +12,7 @@
   /* তিনটি আলাদা টেক্সট কালার */
   --col1: #2c3e50;   /* গাঢ় নীল */
   --col2: #00695c;   /* সবুজাভ */
-  --col3: #8e24aa;   /* বেগুনি */
+  --col3: #2c3e50;   /* বেগুনি */
 }
 
 * {
@@ -46,6 +46,7 @@ h6 {
   max-width: 980px;
   margin: 18px auto;
   padding: 1px 12px;
+  font-weight: bold;
 }
 
 #news-container {
@@ -53,6 +54,7 @@ h6 {
   grid-template-columns: repeat(3, 1fr); /* সবসময় ৩ কলাম */
   gap: 12px;
   background-color: aqua;
+  font-weight: bold;
 }
 
 .headline {
@@ -64,6 +66,7 @@ h6 {
   flex-direction: column;
   text-align: center;
   min-height: 100px;
+  font-weight: bold;
 }
 
 .headline h3 {
