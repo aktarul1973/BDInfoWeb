@@ -26,7 +26,6 @@ async function fetchHeadlines() {
   let headlines = [];
   for (const url of feeds) {
     try {
-      const r = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url));
       const r = await fetch(
   'https://api.rss2json.com/v1/api.json?rss_url=' + 
   encodeURIComponent(url) + 
