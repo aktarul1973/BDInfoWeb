@@ -9,6 +9,8 @@ const feeds = [
   "https://feeds.bbci.co.uk/news/rss.xml",
   "https://www.prothomalo.com/feed",
   "https://www.kalerkantho.com/rss.xml"
+  "https://www.nytimes.com/rss.xml"
+"https://www.timesofisrael.com/rss.xml"
 ];
 
 // তারিখ বের করার জন্য helper function
