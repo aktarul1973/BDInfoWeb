@@ -1,77 +1,68 @@
 // news.js
 
+// news.js - Copy and Paste the code below
+
 const feeds = [
-  "https://www.bbc.com/bengali/index.xml",
-  "https://www.arthosuchak.com/feed/",
-  "https://www.amardesh.com/feed/",
-  "https://www.karatoa.com.bd/feed/",
-  "https://www.bdnews24.com/rss/bangla",
-  "https://feeds.bbci.co.uk/news/rss.xml",
-  "https://www.prothomalo.com/feed",
-  "https://www.kalerkantho.com/rss.xml"
-  "https://www.nytimes.com/rss.xml"
-"https://www.timesofisrael.com/rss.xml"
+  "https://www.bbc.com",
+  "https://www.arthosuchak.com",
+  "https://www.amardesh.com",
+  "https://www.karatoa.com.bd",
+  "https://www.bdnews24.com",
+  "https://feeds.bbci.co.uk",
+  "https://www.prothomalo.com",
+  "https://www.kalerkantho.com",
+  "https://www.nytimes.com",
+  "https://www.timesofisrael.com"
 ];
 
-// তারিখ বের করার জন্য helper function
 function getDate(item) {
-  if (item.pubDate) return new Date(item.pubDate);
-  if (item.published) return new Date(item.published);
-  if (item.updated) return new Date(item.updated);
-  return new Date(0); // যদি কিছু না থাকে, খুব পুরনো ধরে নিন
+  const dateStr = item.pubDate || item.published || item.updated;
+  return dateStr ? new Date(dateStr) : new Date(0);
 }
 
 async function fetchHeadlines() {
   const container = document.getElementById('news-container');
-  container.innerHTML = '';
+  if (!container) return;
 
-  let headlines = [];
-  for (const url of feeds) {
+  const fetchPromises = feeds.map(async (url) => {
     try {
-      const r = await fetch(
-  'https://api.rss2json.com/v1/api.json?rss_url=' + 
-  encodeURIComponent(url) + 
-  '&nocache=' + Date.now()   // ← নতুন অংশ
-);
+      // Free API link with nocache parameter
+      const r = await fetch(`https://api.rss2json.com{encodeURIComponent(url)}&nocache=${Date.now()}`);
       const data = await r.json();
-      if (data && Array.isArray(data.items)) {
-        data.items.forEach(item => {
-          item.sourceTitle = data.feed ? data.feed.title : "অজানা উৎস";
-        });
-        headlines = headlines.concat(data.items);
+      if (data.status === 'ok') {
+        return data.items.map(item => ({
+          ...item,
+          sourceTitle: data.feed ? data.feed.title : "অজানা উৎস"
+        }));
       }
     } catch (e) {
-      console.error('Feed fetch error for', url, e);
+      console.error('Error fetching:', url, e);
     }
-  }
+    return [];
+  });
 
-  // তারিখ অনুযায়ী sort করা (সর্বশেষ আগে)
-  headlines.sort((a, b) => getDate(b) - getDate(a));
+  const results = await Promise.all(fetchPromises);
+  const headlines = results.flat().sort((a, b) => getDate(b) - getDate(a));
 
-  // সর্বশেষ ৬৩টি headline নেওয়া (আপনি slice(0,63) দিয়েছেন)
+  container.innerHTML = '';
   const latestNews = headlines.slice(0, 63);
 
-  for (const item of latestNews) {
-    const text = (item.title || '').trim();
-    const link = item.link || '#';
-    const source = item.sourceTitle || "অজানা উৎস";
-    const time = getDate(item).toLocaleString('bn-BD');
-
+  latestNews.forEach(item => {
     const div = document.createElement("div");
     div.className = "headline";
     div.innerHTML = `
-      <h3>${text}</h3>
+      <h3>${item.title.trim()}</h3>
       <p class="meta">
-        Source: <span class="source">${source}</span> | 
-        Time: <span class="time">${time}</span>
+        Source: <span class="source">${item.sourceTitle}</span> | 
+        Time: <span class="time">${getDate(item).toLocaleString('bn-BD')}</span>
       </p>
-      <p><a href="${link}" target="_blank">মূল খবর পড়ুন</a></p>`;
+      <p><a href="${item.link}" target="_blank">মূল খবর পড়ুন</a></p>`;
     container.appendChild(div);
-  }
+  });
 }
 
-// প্রথমবার লোড
+// Initial Load
 fetchHeadlines();
 
-// প্রতি 2 মিনিট পর আবার লোড
+// Auto Refresh every 2 minutes
 setInterval(fetchHeadlines, 120000);
